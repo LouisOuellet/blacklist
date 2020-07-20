@@ -19,12 +19,15 @@ Options:
 -f                     => Disable all formatting
 ```
 
-### Configuration
-#### Blacklists
+## Configuration
+### Blacklists
 Blacklists can be updated in the list.json file.
-#### Settings
+### Settings
 SMTP and other settings can be updated in the settings.json file.
 SMTP settings are required if you want to send the report via email.
+
+## Tutorial
+A tutorial to setup a cron will come later.
 
 ## Enjoy!
 
