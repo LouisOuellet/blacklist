@@ -3,6 +3,10 @@ This repository contains a PHP application that allows users to scan multiple bl
 
 I saw a similar shell script at https://github.com/adionditsak/blacklist-check-unix-linux-utility and wanted to add reporting to it. I ended up rewriting the script entirely to my flavor. So I could also use the same settings and lists in a PHP version of the shell. This way I was able to provide support for any type of devices for a quick check by using a web server.
 
+## Changelog
+ * [2020-07-20] => Updated README.MD File
+ * [2020-07-20] => Fix an issue with au nary operator in shell when executing without the debug switch.
+
 ## Installation
 ```bash
 git clone https://github.com/LouisOuellet/blacklist.git
