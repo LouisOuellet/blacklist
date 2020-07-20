@@ -180,7 +180,7 @@ function dbg(){
       if [ "$3" != "" ]; then
         LogFile=$3
       fi
-      if [ "$DEBUG" = "true" ]; then
+      if [ $DEBUG = "true" ]; then
         printf "${TYPE}$(PDATE)${ACTION} ${DCMD}\n" | tee -a $logs_file
       else
         printf "${TYPE}$(PDATE)${ACTION} ${DCMD}\n"
