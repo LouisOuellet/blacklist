@@ -3,9 +3,10 @@ This repository contains a PHP application that allows users to scan multiple bl
 
 I saw a similar shell script at https://github.com/adionditsak/blacklist-check-unix-linux-utility and wanted to add reporting to it. I ended up rewriting the script entirely to my flavor. So I could also use the same settings and lists in a PHP version of the shell. This way I was able to provide support for any type of devices for a quick check by using a web server.
 
-Why should I use something like this? If you have a web server or just a mail server, you may want to monitor if the public IP of the server ever gets blocked on a public listing. Since a lot of mail servers uses those public listing. It is quite usefull to monitor if your server ever gets blocked. This facilitates invesgations related to undeliverable emails.
+Why should I use something like this? If you have a web server or just a mail server, you may want to monitor if the public IP of the server ever gets blocked on a public listing. Since a lot of mail servers uses those public listing. It is quite usefull to monitor if your server ever gets blocked. This facilitates investigations related to undeliverable emails.
 
 ## Changelog
+ * [2020-07-20] => Renamed debug mode to reporting mode. Kept the same switch (-v)
  * [2020-07-20] => Updated README.MD File
  * [2020-07-20] => Fix an issue with a unary operator in shell when executing without the debug switch.
 
@@ -54,7 +55,7 @@ Usage: ./blacklist [options] IP/FQDN
 
 Options:
 
--v                     => Enable Debug Mode
+-v                     => Enable Reporting Mode
                           Input commands sent are stored in [log file]
 -e                     => Compile errors and warnings after execution 
 -s                     => Send report via email

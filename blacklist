@@ -19,7 +19,7 @@ scriptname=$(echo $0 | sed -e 's@.*/@@')
 # Script Personalisation
 Title=""
 help_options="
--v                     => Enable Debug Mode
+-v                     => Enable Reporting Mode
                           Input commands sent are stored in ${logs_file}
 -e                     => Compile errors and warnings after execution 
 -s                     => Send report via email
