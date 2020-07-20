@@ -1,0 +1,16 @@
+{
+    "smtp":{
+        "host": "smtp.domain.com",
+        "port": "465",
+        "username": "smtp@domain.com",
+        "password": "password"
+    },
+    "send":{
+        "name": "Monitoring",
+        "from": "monitoring@domain.com",
+        "to": "mailinglist@domain.com"
+    },
+    "logs":{
+        "directory": "/tmp/"
+    }
+}
