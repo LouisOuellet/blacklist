@@ -4,7 +4,7 @@
 #DESCRIPTION:      This script was build to provide reporting/monitoring of IP/Domain in public blacklist
 #AUTHOR:           Louis Ouellet
 #DATE:             2020-07-18
-#VERSION:          1.1-0
+#VERSION:          1.1-1
 
 #==============================================================================
 # BASH SETUP

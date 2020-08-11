@@ -21,7 +21,6 @@ if(!empty($_POST)){
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/4f8426d3cf.js" crossorigin="anonymous"></script>
     <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -38,6 +37,8 @@ if(!empty($_POST)){
         }
       }
     </style>
+    <!-- Custom styles for this template -->
+    <link href="sticky-footer-navbar.css" rel="stylesheet">
   </head>
   <body class="d-flex flex-column h-100">
     <header>
@@ -46,7 +47,7 @@ if(!empty($_POST)){
         <a class="navbar-brand" href="index.php">Blacklist Check</a>
         <div class="navbar-collapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
+            <li class="nav-item active">
               <a class="nav-link" href="https://github.com/LouisOuellet/Blacklist">GitHub</a>
             </li>
           </ul>
