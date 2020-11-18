@@ -21,7 +21,7 @@ Title=""
 help_options="
 -v                     => Enable Reporting Mode
                           Input commands sent are stored in ${logs_file}
--e                     => Compile errors and warnings after execution 
+-e                     => Compile errors and warnings after execution
 -s                     => Send report via email
 -f                     => Disable all formatting
 "
@@ -180,10 +180,14 @@ function dbg(){
       if [ "$3" != "" ]; then
         LogFile=$3
       fi
+			DCMDout=$(echo $DCMD | sed -e "s/\n/ /g")
+			for string in ${protect[@]};do
+				DCMDout=$(echo $DCMDout | sed -e "s/$string/xxx/g")
+			done
       if [ "$DEBUG" = "true" ]; then
-        printf "${TYPE}$(PDATE)${ACTION} ${DCMD}\n" | tee -a $logs_file
+        printf "${TYPE}$(PDATE)${ACTION} ${DCMDout}\n" | tee -a $logs_file
       else
-        printf "${TYPE}$(PDATE)${ACTION} ${DCMD}\n"
+        printf "${TYPE}$(PDATE)${ACTION} ${DCMDout}\n"
       fi
     done
   else
@@ -230,17 +234,30 @@ function send(){
 # SETTINGS
 #==============================================================================
 
+
+function protectDCMD(){
+	protect=(
+		$smtp_host
+		$smtp_port
+		$smtp_username
+		$smtp_password
+		$send_name
+		$send_from
+	)
+}
+
 function import(){
-    smtp_host=$(jq -r '.smtp.host' settings.json)
-    smtp_port=$(jq -r '.smtp.port' settings.json)
-    smtp_username=$(jq -r '.smtp.username' settings.json)
-    smtp_password=$(jq -r '.smtp.password' settings.json)
-    send_name=$(jq -r '.send.name' settings.json)
-    send_from=$(jq -r '.send.from' settings.json)
-    send_to=$(jq -r '.send.to' settings.json)
-    logs_directory=$(jq -r '.logs.directory' settings.json)
-    blacklists=$(jq -r '.lists[]' list.json)
-    logs_file="${logs_directory}$(date +%s%N).log"
+  smtp_host=$(jq -r '.smtp.host' settings.json)
+  smtp_port=$(jq -r '.smtp.port' settings.json)
+  smtp_username=$(jq -r '.smtp.username' settings.json)
+  smtp_password=$(jq -r '.smtp.password' settings.json)
+  send_name=$(jq -r '.send.name' settings.json)
+  send_from=$(jq -r '.send.from' settings.json)
+  send_to=$(jq -r '.send.to' settings.json)
+  logs_directory=$(jq -r '.logs.directory' settings.json)
+  blacklists=$(jq -r '.lists[]' list.json)
+  logs_file="${logs_directory}$(date +%s%N).log"
+	protectDCMD
 }
 
 #==============================================================================
@@ -256,7 +273,7 @@ function reverse(){
 
 function loop(){
     reverse_dns=$(dig +short -x $1)
-    echo $1 name ${reverse_dns:----}
+    echo $1 name ${reverse_dns:----} | dbg i v
     for bl in ${blacklists} ; do
         listed="$(dig +short -t a ${reverse}.${bl})"
         if [[ $listed ]]; then
