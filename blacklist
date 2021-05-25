@@ -197,15 +197,11 @@ function dbg(){
 
 function exec(){
   if [ "$1" != "" ]; then
-    if [ "$DEBUG" = "true" ]; then
-      echo "exec $1" | dbg i s
-      if eval $1 2>&1 | dbg o o;then
-        echo "$1" | dbg s r
-      else
-        echo "$1" | dbg e r
-      fi
+    echo "exec $1" | dbg i s
+    if eval $1 2>&1 | dbg o o;then
+      echo "$1" | dbg s r
     else
-      eval $1
+      echo "$1" | dbg e r
     fi
   else
     error "Missing Argument(s)"
