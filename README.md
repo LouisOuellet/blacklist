@@ -6,6 +6,7 @@ I saw a similar shell script at https://github.com/adionditsak/blacklist-check-u
 Why should I use something like this? If you have a web server or just a mail server, you may want to monitor if the public IP of the server ever gets blocked on a public listing. Since a lot of mail servers uses those public listing. It is quite usefull to monitor if your server ever gets blocked. This facilitates investigations related to undeliverable emails.
 
 ## Changelog
+ * [2021-07-23] => Added support for brew
  * [2020-07-20] => Renamed debug mode to reporting mode. Kept the same switch (-v)
  * [2020-07-20] => Updated README.MD File
  * [2020-07-20] => Fix an issue with a unary operator in shell when executing without the debug switch.
@@ -57,7 +58,7 @@ Options:
 
 -v                     => Enable Reporting Mode
                           Input commands sent are stored in [log file]
--e                     => Compile errors and warnings after execution 
+-e                     => Compile errors and warnings after execution
 -s                     => Send report via email
 -f                     => Disable all formatting
 ```
@@ -192,4 +193,3 @@ $ ./blacklist -vesf 8.8.8.8
 ```
 
 ## Enjoy!
-
