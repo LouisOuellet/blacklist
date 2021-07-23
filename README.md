@@ -20,7 +20,7 @@ git clone https://github.com/LouisOuellet/blacklist.git
 ### Blacklists
 Blacklists can be updated in the list.json file using your favorite editor.
 ### Settings
-Edit the settings.json file with your favorite editor.
+Create a settings.json file with your favorite editor. This is required for email reporting.
 #### Sample
 ```json
 {
