@@ -213,9 +213,15 @@ function pkg(){
     if [ "$DEBUG" = "true" ]; then
       echo "pkg $1" | dbg i s
     fi
-    if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-      exec "sudo apt-get update"
-      exec "sudo apt-get install --fix-missing $1 -y"
+    if [ "$(which $1)" == "" ]; then
+      if [ "$(which apt-get)" != "" ]; then
+        exec "sudo apt-get update"
+        exec "sudo apt-get install --fix-missing $1 -y"
+      else
+        if [ "$(which brew)" != "" ]; then
+          exec "brew install $1"
+        fi
+      fi
     fi
   else
     error "Missing Argument(s)"
@@ -339,6 +345,7 @@ shift $((OPTIND -1))
 
 pkg jq
 pkg s-nail
+pkg dig
 import
 main $1
 
