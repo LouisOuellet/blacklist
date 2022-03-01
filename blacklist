@@ -435,7 +435,10 @@ fi
 
 if [[ "$ERRORrpt" = "true" ]]; then
   if [[ -f "$logs_file" ]]; then
-    cat $logs_file | egrep "✗|!"
+    case "${OS}" in
+        Mac)cat $logs_file | egrep '(✗|!)';;
+        *)cat $logs_file | egrep '✗|!';;
+    esac;
   fi
 fi
 
