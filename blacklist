@@ -36,6 +36,36 @@ set -o pipefail
 #export LC_ALL=en_US.UTF-8 > /dev/null 2>&1 || export LC_ALL=en_GB.UTF-8 > /dev/null 2>&1 || export LC_ALL=C.UTF-8 > /dev/null 2>&1
 
 #==============================================================================
+# GATHERING SYSTEM INFORMATION
+#==============================================================================
+
+# Identify OS
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     OS=Linux;;
+    Darwin*)    OS=Mac;;
+    CYGWIN*)    OS=Cygwin;;
+    MINGW*)     OS=MinGw;;
+    *)          OS="UNKNOWN:${unameOut}"
+esac
+
+# Identify Distribution
+case $OS in
+  Linux)
+    Distribution=$(hostnamectl | grep 'Operating System' | cut -d: -f2 | xargs)
+    Architecture=$(hostnamectl | grep 'Architecture' | cut -d: -f2 | xargs)
+    PackageManager=
+    if [[ "$(whereis pacman | awk '{ print $2 }')" != '' ]]; then PackageManager="pacman"; fi
+    if [[ "$(whereis yum | awk '{ print $2 }')" != '' ]]; then PackageManager="yum"; fi
+    if [[ "$(whereis dnf | awk '{ print $2 }')" != '' ]]; then PackageManager="dnf"; fi
+    if [[ "$(whereis apt-get | awk '{ print $2 }')" != '' ]]; then PackageManager="apt-get"; fi
+    # if [[ "$(whereis emerge | awk '{ print $2 }')" != '' ]]; then PackageManager="emerge"; fi
+    # if [[ "$(whereis zypp | awk '{ print $2 }')" != '' ]]; then PackageManager="zypp"; fi
+    ;;
+  *);;
+esac
+
+#==============================================================================
 # FORMATTING
 #==============================================================================
 
@@ -213,16 +243,40 @@ function pkg(){
     if [ "$DEBUG" = "true" ]; then
       echo "pkg $1" | dbg i s
     fi
-    if [ "$(which $1)" == "" ]; then
-      if [ "$(which apt-get)" != "" ]; then
-        exec "sudo apt-get update"
-        exec "sudo apt-get install --fix-missing $1 -y"
-      else
-        if [ "$(which brew)" != "" ]; then
+    case $OS in
+      Linux)
+        if [[ "$(whereis $1 | awk '{ print $2 }')" == '' ]]; then
+          case $PackageManager in
+            pacman)
+              exec "sudo pacman -S --noconfirm $1"
+              ;;
+            dnf)
+              exec "sudo dnf install -y $1"
+              ;;
+            yum)
+              exec "sudo yum install -y $1"
+              ;;
+            apt-get)
+              exec "sudo apt-get update"
+              exec "sudo apt-get install -y --fix-missing $1"
+              ;;
+            *)
+              echo "Unable to install $1" | dbg e e
+              echo "Unsupported Package Manager" | dbg e e
+              ;;
+          esac
+        fi
+        ;;
+      Mac)
+        if [[ "$(command -v $1)" == '' ]]; then
           exec "brew install $1"
         fi
-      fi
-    fi
+        ;;
+      *)
+        echo "Unable to install $1" | dbg e e
+        echo "Unsupported OS" | dbg e e
+        ;;
+    esac
   else
     error "Missing Argument(s)"
   fi
@@ -249,16 +303,26 @@ function protectDCMD(){
 }
 
 function import(){
-  smtp_host=$(jq -r '.smtp.host' settings.json)
-  smtp_port=$(jq -r '.smtp.port' settings.json)
-  smtp_username=$(jq -r '.smtp.username' settings.json)
-  smtp_password=$(jq -r '.smtp.password' settings.json)
-  send_name=$(jq -r '.send.name' settings.json)
-  send_from=$(jq -r '.send.from' settings.json)
-  send_to=$(jq -r '.send.to' settings.json)
-  logs_directory=$(jq -r '.logs.directory' settings.json)
+  if [[ -f "settings.json" ]]; then
+    smtp_host=$(jq -r '.smtp.host' settings.json)
+    smtp_port=$(jq -r '.smtp.port' settings.json)
+    smtp_username=$(jq -r '.smtp.username' settings.json)
+    smtp_password=$(jq -r '.smtp.password' settings.json)
+    send_name=$(jq -r '.send.name' settings.json)
+    send_from=$(jq -r '.send.from' settings.json)
+    send_to=$(jq -r '.send.to' settings.json)
+    logs_directory=$(jq -r '.logs.directory' settings.json)
+  fi
   blacklists=$(jq -r '.lists[]' list.json)
-  logs_file="${logs_directory}$(date +%s%N).log"
+  case $OS in
+    Linux)
+      logs_file="${logs_directory}$(date +%s%N).log"
+      ;;
+    Mac)
+      logs_file="${logs_directory}$(date +%s).log"
+      ;;
+    *);;
+  esac
 	protectDCMD
 }
 
@@ -291,7 +355,15 @@ function loop(){
 }
 
 function main(){
-  fqdn=$(echo $1 | grep -P "(?=^.{5,254}$)(^(?:(?!\d+\.)[a-za-z0-9_\-]{1,63}\.?)+(?:[a-za-z]{2,})$)")
+  case $OS in
+    Linux)
+      fqdn=$(echo $1 | grep -P "(?=^.{5,254}$)(^(?:(?!\d+\.)[a-za-z0-9_\-]{1,63}\.?)+(?:[a-za-z]{2,})$)")
+      ;;
+    Mac)
+      fqdn=$(echo $1 | grep -e "(?=^.{5,254}$)(^(?:(?!\d+\.)[a-za-z0-9_\-]{1,63}\.?)+(?:[a-za-z]{2,})$)")
+      ;;
+    *);;
+  esac
   if [[ $fqdn ]] ; then
     domain=$(host $1 | head -n1 | awk '{print $4}')
     reverse $domain "IP not valid or domain could not be resolved."
@@ -349,20 +421,22 @@ pkg dig
 import
 main $1
 
-if [ "$DEBUG" = "true" ]; then
-    duration=$SECONDS
-    echo "#############################################################" | dbg i e
-    echo "log file.......: $logs_file" | dbg i v
-    echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed." | dbg i v
-    echo "#############################################################" | dbg i e
+if [[ "$DEBUG" = "true" ]]; then
+  duration=$SECONDS
+  echo "#############################################################" | dbg i e
+  echo "log file.......: $logs_file" | dbg i v
+  echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed." | dbg i v
+  echo "#############################################################" | dbg i e
 fi
 
-if [ "$SENDrpt" = "true" ]; then
-    send "IP/FQDN: $1" "Blacklist Scan of $1 was completed. See attached report."
+if [[ "$SENDrpt" = "true" ]]; then
+  send "IP/FQDN: $1" "Blacklist Scan of $1 was completed. See attached report."
 fi
 
-if [ "$ERRORrpt" = "true" ]; then
+if [[ "$ERRORrpt" = "true" ]]; then
+  if [[ -f "$logs_file" ]]; then
     cat $logs_file | egrep "✗|!"
+  fi
 fi
 
 exit 0

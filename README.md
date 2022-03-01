@@ -5,7 +5,24 @@ I saw a similar shell script at https://github.com/adionditsak/blacklist-check-u
 
 Why should I use something like this? If you have a web server or just a mail server, you may want to monitor if the public IP of the server ever gets blocked on a public listing. Since a lot of mail servers uses those public listing. It is quite usefull to monitor if your server ever gets blocked. This facilitates investigations related to undeliverable emails.
 
+## Officially supported operating systems
+ * Ubuntu
+ * Debian
+ * macOS
+ * Arch
+
 ## Changelog
+ * [2022-03-01] => Fix an issue with the log file name on macOS
+ * [2022-03-01] => Skip package installation if already installed
+ * [2022-03-01] => Added support for DNF package manager
+ * [2022-03-01] => Added support for YUM package manager
+ * [2022-03-01] => Added support for APT-GET package manager
+ * [2022-03-01] => Added support for PACMAN package manager
+ * [2022-03-01] => Added support for BREW package manager
+ * [2022-03-01] => Updated the list of RBLs
+ * [2022-03-01] => Fix an issue when the log file does not exist
+ * [2022-03-01] => Fix an issue when the settings.json file does not exist
+ * [2022-03-01] => Added support for grep on macOS
  * [2021-07-23] => Added support for brew
  * [2020-07-20] => Renamed debug mode to reporting mode. Kept the same switch (-v)
  * [2020-07-20] => Updated README.MD File
